@@ -178,6 +178,7 @@ async function confirmDelete() {
 </script>
 
 <style scoped>
+ion-title { padding-inline-start: 0; }
 .state { font-size: 1.05rem; margin: 0 0 16px; }
 .actions { display: flex; gap: 24px; justify-content: center; }
 .actions ion-button { --border-radius: 50%; width: 76px; height: 76px; }
