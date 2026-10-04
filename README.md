@@ -28,7 +28,8 @@ Les données sont stockées localement sur l'appareil.
 
 - `src/models/medication.ts` : types, dates, fréquences
 - `src/services/repository.ts` : stockage derrière l'interface `MedicationRepository` (point d'extension pour une synchronisation cloud)
-- `src/services/notifications.ts` : planification sur une fenêtre glissante de 14 jours, replanifiée à chaque ouverture, et messages de relance
+- `src/services/notifications.ts` : planification sur une fenêtre glissante de 14 jours, replanifiée à chaque ouverture
+- `src/services/notificationMessages.ts` : messages de notification (30 par niveau d'insistance, tirés au hasard)
 - `src/stores/medications.ts` : état et actions
 - `src/views/`, `src/components/` : interface
 - `tests/unit/` : tests unitaires

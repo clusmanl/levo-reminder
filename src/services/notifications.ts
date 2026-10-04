@@ -2,6 +2,7 @@ import { Capacitor } from '@capacitor/core';
 import { App } from '@capacitor/app';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { addDays, dateKey, isDue, type Medication } from '@/models/medication';
+import { MESSAGES } from './notificationMessages';
 
 const CHANNEL_ID = 'levo-reminders';
 /** Nombre de jours planifiés à l'avance (re-planifié à chaque ouverture de l'app). */
@@ -13,19 +14,16 @@ const native = () => Capacitor.isNativePlatform();
 
 /* ---------- messages de plus en plus insistants ---------- */
 
-const MESSAGES: Array<(n: string) => [string, string]> = [
-  (n) => [`☀️ C'est l'heure : ${n}`, `Ton petit rituel du matin t'attend. Ça ne prend que 10 secondes !`],
-  (n) => ['👋 Toc toc toc…', `${n} se sent un peu seul. Une petite coche, peut-être ?`],
-  (n) => ['😏 Hé ho, tu m\'as oublié ?', `Je ne voudrais pas paraître insistant, mais… si, en fait. ${n} !`],
-  (n) => ['🚨 Alerte cachet !', `Ton futur toi te remerciera. Ton présent toi aussi, d'ailleurs. (${n})`],
-  (n) => ['😤 Je commence à bouder', `Un verre d'eau, ${n}, et c'est plié. Chrono : 10 secondes.`],
-  (n) => ['🥺 Bon. Je supplie.', `S'il te plaît, prends ${n}. Je te promets de te laisser tranquille après.`],
-  (n) => ['🛎️ DERNIER APPEL', `Je sors les casseroles si tu ne prends pas ${n}. Tu m'as prévenu.`],
-];
-
-export function messageFor(name: string, level: number): { title: string; body: string } {
-  const [title, body] = MESSAGES[Math.min(level, MESSAGES.length - 1)](name);
-  return { title, body };
+/** Tire au hasard un message du niveau d'insistance donné (borné au dernier niveau). */
+export function messageFor(
+  name: string,
+  level: number,
+  random: () => number = Math.random,
+): { title: string; body: string } {
+  const pool = MESSAGES[Math.min(Math.max(level, 0), MESSAGES.length - 1)];
+  const [title, body] = pool[Math.floor(random() * pool.length)];
+  const fill = (text: string) => text.replaceAll('{name}', name);
+  return { title: fill(title), body: fill(body) };
 }
 
 /* ---------- API ---------- */
