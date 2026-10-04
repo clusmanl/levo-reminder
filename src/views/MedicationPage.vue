@@ -59,7 +59,7 @@
         <MedicationForm v-model="draft" :show-enabled="true" />
       </ion-card>
 
-      <ion-button expand="block" color="danger" fill="outline" class="ion-margin-top" @click="confirmDelete">
+      <ion-button expand="block" fill="outline" class="btn-delete ion-margin-top" @click="confirmDelete">
         <ion-icon slot="start" :icon="trashOutline" />
         Supprimer ce rappel
       </ion-button>
@@ -193,5 +193,10 @@ async function confirmDelete() {
   --color: var(--levo-cross-color);
   --border-color: var(--levo-cross-color);
   --border-width: 2px;
+}
+.btn-delete {
+  --color: var(--levo-cross-color);
+  --border-color: var(--levo-cross-color);
+  --border-width: 3px;
 }
 </style>
