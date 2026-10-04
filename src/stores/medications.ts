@@ -1,7 +1,6 @@
 import { computed, ref } from 'vue';
 import {
   clone,
-  dateKey,
   type IntakeStatus,
   type Medication,
   type MedicationDraft,
@@ -14,7 +13,7 @@ import {
   scheduleForMedication,
 } from '@/services/notifications';
 
-// Pour le cloud plus tard : remplacer par une autre implémentation.
+// Seule implémentation du stockage ; une synchronisation cloud ajoutera la sienne ici.
 const repository: MedicationRepository = new LocalRepository();
 
 const medications = ref<Medication[]>([]);
@@ -93,6 +92,5 @@ export function useMedications() {
     update,
     remove,
     setIntake,
-    today: dateKey,
   };
 }
