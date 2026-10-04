@@ -16,6 +16,7 @@ import './theme/variables.css';
 
 import { useMedications } from './stores/medications';
 import { initNotifications } from './services/notifications';
+import { hideNavigationBar } from './services/systemBars';
 
 const app = createApp(App)
   .use(IonicVue)
@@ -28,9 +29,13 @@ const store = useMedications();
   await initNotifications(
     // Clic sur une notification → page du médicament concerné.
     (medId) => router.push(`/medication/${medId}`),
-    // Retour au premier plan → on rafraîchit la fenêtre de notifications planifiées.
-    () => store.rescheduleAll(),
+    // Retour au premier plan → barre de navigation re-masquée, notifications replanifiées.
+    () => {
+      hideNavigationBar();
+      store.rescheduleAll();
+    },
   );
   await router.isReady();
   app.mount('#app');
+  hideNavigationBar();
 })();
