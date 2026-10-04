@@ -1,0 +1,179 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { newDraft, type Medication } from '@/models/medication';
+
+const native = vi.hoisted(() => ({ value: true }));
+const LocalNotifications = vi.hoisted(() => ({
+  checkPermissions: vi.fn(),
+  requestPermissions: vi.fn(),
+  checkExactNotificationSetting: vi.fn(),
+  changeExactNotificationSetting: vi.fn(),
+  getPending: vi.fn(),
+  cancel: vi.fn(),
+  getDeliveredNotifications: vi.fn(),
+  removeDeliveredNotifications: vi.fn(),
+  schedule: vi.fn(),
+}));
+
+vi.mock('@capacitor/core', () => ({ Capacitor: { isNativePlatform: () => native.value } }));
+vi.mock('@capacitor/app', () => ({ App: { addListener: vi.fn() } }));
+vi.mock('@capacitor/local-notifications', () => ({ LocalNotifications }));
+
+import {
+  cancelForMedication,
+  ensurePermissions,
+  messageFor,
+  notificationId,
+  scheduleForMedication,
+} from '@/services/notifications';
+
+function makeMed(overrides: Partial<Medication> = {}): Medication {
+  return {
+    ...newDraft(),
+    id: 'med-1',
+    numId: 7,
+    name: 'Lévo',
+    createdAt: '2026-10-01T00:00:00Z',
+    log: {},
+    ...overrides,
+  };
+}
+
+const scheduled = () =>
+  (LocalNotifications.schedule.mock.calls[0]?.[0].notifications ?? []) as Array<{
+    id: number;
+    title: string;
+    schedule: { at: Date };
+    extra: { medId: string; date: string; level: number };
+  }>;
+
+beforeEach(() => {
+  native.value = true;
+  vi.useFakeTimers();
+  vi.setSystemTime(new Date(2026, 9, 3, 8, 0)); // 3 oct. 2026, 08:00 (heure locale)
+  Object.values(LocalNotifications).forEach((fn) => fn.mockReset());
+  LocalNotifications.getPending.mockResolvedValue({ notifications: [] });
+  LocalNotifications.getDeliveredNotifications.mockResolvedValue({ notifications: [] });
+});
+
+afterEach(() => vi.useRealTimers());
+
+describe('messageFor', () => {
+  it('inclut le nom du médicament dans le premier rappel', () => {
+    const { title, body } = messageFor('Lévo', 0);
+    expect(`${title} ${body}`).toContain('Lévo');
+  });
+
+  it("chaque relance a un message différent, jusqu'au dernier palier", () => {
+    const titles = Array.from({ length: 7 }, (_, i) => messageFor('X', i).title);
+    expect(new Set(titles).size).toBe(7);
+  });
+
+  it('reste sur le dernier message au-delà du dernier palier', () => {
+    expect(messageFor('X', 99)).toEqual(messageFor('X', 6));
+  });
+});
+
+describe('notificationId', () => {
+  it('est unique par médicament, jour et niveau, et reste un int32', () => {
+    const ids = new Set<number>();
+    for (const numId of [1, 2, 20000]) {
+      for (let day = 0; day < 14; day++) {
+        for (let level = 0; level <= 10; level++) ids.add(notificationId(numId, day, level));
+      }
+    }
+    expect(ids.size).toBe(3 * 14 * 11);
+    expect(Math.max(...ids)).toBeLessThan(2 ** 31);
+  });
+});
+
+describe('scheduleForMedication', () => {
+  it('ne fait rien hors plateforme native', async () => {
+    native.value = false;
+    await scheduleForMedication(makeMed());
+    expect(LocalNotifications.getPending).not.toHaveBeenCalled();
+    expect(LocalNotifications.schedule).not.toHaveBeenCalled();
+  });
+
+  it('planifie rappel + relances, sur 14 jours, aux bonnes heures', async () => {
+    await scheduleForMedication(makeMed({ time: '10:00', maxRepeats: 2, repeatIntervalMin: 15 }));
+    const list = scheduled();
+    expect(list).toHaveLength(14 * 3);
+
+    const today = list.filter((n) => n.extra.date === '2026-10-03');
+    expect(today.map((n) => [n.schedule.at.getHours(), n.schedule.at.getMinutes()])).toEqual([
+      [10, 0],
+      [10, 15],
+      [10, 30],
+    ]);
+    expect(today.map((n) => n.extra.level)).toEqual([0, 1, 2]);
+    expect(list.every((n) => n.extra.medId === 'med-1')).toBe(true);
+  });
+
+  it("saute les notifications déjà passées aujourd'hui", async () => {
+    vi.setSystemTime(new Date(2026, 9, 3, 10, 20));
+    await scheduleForMedication(makeMed({ time: '10:00', maxRepeats: 2, repeatIntervalMin: 15 }));
+    const today = scheduled().filter((n) => n.extra.date === '2026-10-03');
+    expect(today.map((n) => n.extra.level)).toEqual([2]); // seule la relance de 10:30 reste
+  });
+
+  it("n'envoie rien pour un jour déjà pris ou ignoré", async () => {
+    const log = {
+      '2026-10-03': { status: 'taken' as const, at: '2026-10-03T07:00:00Z' },
+      '2026-10-04': { status: 'skipped' as const, at: '2026-10-03T07:00:00Z' },
+    };
+    await scheduleForMedication(makeMed({ maxRepeats: 0, log }));
+    const dates = scheduled().map((n) => n.extra.date);
+    expect(dates).not.toContain('2026-10-03');
+    expect(dates).not.toContain('2026-10-04');
+    expect(dates).toHaveLength(12);
+  });
+
+  it('respecte la fréquence', async () => {
+    await scheduleForMedication(makeMed({ maxRepeats: 0, frequency: { kind: 'weekdays', days: [1] } }));
+    const dates = scheduled().map((n) => n.extra.date);
+    expect(dates).toEqual(['2026-10-05', '2026-10-12']); // lundis dans la fenêtre
+  });
+
+  it("annule l'existant avant de replanifier, et ne planifie rien si désactivé", async () => {
+    LocalNotifications.getPending.mockResolvedValue({
+      notifications: [{ id: notificationId(7, 0, 0) }, { id: notificationId(8, 0, 0) }],
+    });
+    await scheduleForMedication(makeMed({ enabled: false }));
+    expect(LocalNotifications.cancel).toHaveBeenCalledWith({
+      notifications: [{ id: notificationId(7, 0, 0) }], // pas celui du médicament n°8
+    });
+    expect(LocalNotifications.schedule).not.toHaveBeenCalled();
+  });
+});
+
+describe('cancelForMedication', () => {
+  it('retire aussi les notifications déjà affichées pour ce médicament', async () => {
+    const mine = { id: 1, extra: { medId: 'med-1' } };
+    const other = { id: 2, extra: { medId: 'autre' } };
+    LocalNotifications.getDeliveredNotifications.mockResolvedValue({ notifications: [mine, other] });
+    await cancelForMedication({ id: 'med-1', numId: 7 });
+    expect(LocalNotifications.removeDeliveredNotifications).toHaveBeenCalledWith({ notifications: [mine] });
+  });
+});
+
+describe('ensurePermissions', () => {
+  it('renvoie false hors plateforme native', async () => {
+    native.value = false;
+    expect(await ensurePermissions()).toBe(false);
+  });
+
+  it("demande la permission puis l'alarme exacte si nécessaire", async () => {
+    LocalNotifications.checkPermissions.mockResolvedValue({ display: 'prompt' });
+    LocalNotifications.requestPermissions.mockResolvedValue({ display: 'granted' });
+    LocalNotifications.checkExactNotificationSetting.mockResolvedValue({ exact_alarm: 'denied' });
+    expect(await ensurePermissions()).toBe(true);
+    expect(LocalNotifications.changeExactNotificationSetting).toHaveBeenCalled();
+  });
+
+  it("s'arrête si la permission est refusée", async () => {
+    LocalNotifications.checkPermissions.mockResolvedValue({ display: 'denied' });
+    LocalNotifications.requestPermissions.mockResolvedValue({ display: 'denied' });
+    expect(await ensurePermissions()).toBe(false);
+    expect(LocalNotifications.checkExactNotificationSetting).not.toHaveBeenCalled();
+  });
+});
