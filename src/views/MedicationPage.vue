@@ -11,7 +11,7 @@
 
     <ion-content v-if="med" class="ion-padding">
       <!-- Prise du jour -->
-      <ion-card class="today">
+      <ion-card>
         <ion-card-header>
           <ion-card-subtitle>Aujourd'hui</ion-card-subtitle>
           <ion-card-title>{{ todayLabel }}</ion-card-title>

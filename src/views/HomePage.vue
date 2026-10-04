@@ -14,12 +14,7 @@
       <ion-list v-else>
         <ion-item-sliding v-for="med in medications" :key="med.id">
           <ion-item button detail :router-link="`/medication/${med.id}`">
-            <ion-icon
-              slot="start"
-              :icon="statusOf(med).icon"
-              :color="statusOf(med).color"
-              :class="statusOf(med).cls"
-            />
+            <ion-icon slot="start" :icon="statusOf(med).icon" :class="statusOf(med).cls" />
             <ion-label>
               <h2>{{ med.name }}</h2>
               <p>{{ med.time }} · {{ describeFrequency(med.frequency) }}</p>
@@ -97,10 +92,10 @@ async function create() {
 
 function statusOf(med: Medication) {
   const entry = med.log[dateKey()];
-  if (entry?.status === 'taken') return { icon: checkmarkCircle, color: undefined, cls: 'is-taken', label: 'Pris' };
-  if (entry?.status === 'skipped') return { icon: closeCircle, color: undefined, cls: 'is-skipped', label: 'Ignoré' };
-  if (!isDue(med, dateKey())) return { icon: removeCircleOutline, color: 'medium', label: 'Pas aujourd\'hui' };
-  return { icon: ellipseOutline, color: 'warning', label: 'À prendre' };
+  if (entry?.status === 'taken') return { icon: checkmarkCircle, cls: 'is-taken', label: 'Pris' };
+  if (entry?.status === 'skipped') return { icon: closeCircle, cls: 'is-skipped', label: 'Ignoré' };
+  if (!isDue(med, dateKey())) return { icon: removeCircleOutline, cls: 'is-off', label: 'Pas aujourd\'hui' };
+  return { icon: ellipseOutline, cls: 'is-pending', label: 'À prendre' };
 }
 
 async function confirmDelete(id: string, name: string) {
@@ -118,4 +113,8 @@ async function confirmDelete(id: string, name: string) {
 
 <style scoped>
 .empty { text-align: center; margin-top: 30vh; color: var(--ion-color-medium); padding: 0 24px; }
+ion-icon.is-taken { color: var(--levo-check-color); }
+ion-icon.is-skipped { color: var(--levo-cross-color); }
+ion-icon.is-pending { color: var(--ion-color-warning); }
+ion-icon.is-off { color: var(--ion-color-medium); }
 </style>
