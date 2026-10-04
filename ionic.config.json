@@ -1,0 +1,7 @@
+{
+  "name": "Levo Reminder",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue-vite"
+}

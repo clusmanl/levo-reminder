@@ -1,0 +1,137 @@
+:root {
+  --levo-beige: #f3e9d7;
+  --levo-beige-dark: #e8dbc2;
+  --levo-text: #3b3022;
+
+  --ion-background-color: var(--levo-beige);
+  --ion-background-color-rgb: 243, 233, 215;
+  --ion-text-color: var(--levo-text);
+  --ion-text-color-rgb: 59, 48, 34;
+
+  --ion-toolbar-background: var(--levo-beige);
+  --ion-toolbar-color: var(--levo-text);
+  --ion-toolbar-border-color: var(--levo-beige-dark);
+
+  --ion-item-background: var(--levo-beige);
+  --ion-card-background: var(--levo-beige);
+  --ion-item-border-color: var(--levo-beige-dark);
+  --ion-border-color: var(--levo-beige-dark);
+
+  --levo-check-color: #acc5cb;
+  --levo-check-contrast: #ffffff;
+  --levo-cross-color: #b22525;
+
+  /* Couleur principale (slider, toggle, bouton +, boutons texte) : brun accordé au beige. */
+  --ion-color-primary: #8a6f47;
+  --ion-color-primary-rgb: 138, 111, 71;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #79613e;
+  --ion-color-primary-tint: #967c59;
+
+  /* Danger (suppression) : même rouge que la croix. */
+  --ion-color-danger: #b22525;
+  --ion-color-danger-rgb: 178, 37, 37;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+  --ion-color-danger-shade: #9d2121;
+  --ion-color-danger-tint: #bb3a3a;
+
+  /* Avertissement (« à prendre », « oublié ») : or atténué, plus doux sur le beige. */
+  --ion-color-warning: #d49a3a;
+  --ion-color-warning-rgb: 212, 154, 58;
+  --ion-color-warning-contrast: #ffffff;
+  --ion-color-warning-contrast-rgb: 255, 255, 255;
+  --ion-color-warning-shade: #bb8833;
+  --ion-color-warning-tint: #d9a54e;
+
+  --ion-color-step-50: #efe4cf;
+  --ion-color-step-100: #e8dbc2;
+  --ion-color-step-150: #e0d2b8;
+  --ion-color-step-200: #d8c9ad;
+  --ion-color-step-300: #c9b995;
+  --ion-color-step-400: #b9a77f;
+  --ion-color-step-500: #a8956c;
+  --ion-color-step-600: #8f7e5b;
+  --ion-color-step-700: #756648;
+  --ion-color-step-800: #5a4e38;
+  --ion-color-step-900: #3f3628;
+}
+
+ion-modal {
+  --background: var(--levo-beige);
+}
+
+ion-card {
+  border: 1px solid var(--ion-color-step-500);
+  box-shadow: none;
+  padding: 10px;
+}
+
+ion-input,
+ion-select {
+  --background: transparent;
+  --color: var(--levo-text);
+  --placeholder-color: var(--ion-color-step-600);
+  --placeholder-opacity: 1;
+  --border-color: var(--ion-color-step-500);
+  --border-width: 1px;
+  --border-radius: 10px;
+  --highlight-color-focused: var(--ion-color-step-700);
+}
+
+ion-input .label-text-wrapper,
+ion-select .label-text-wrapper {
+  color: var(--ion-color-step-700);
+}
+
+.form ion-item {
+  --padding-start: 12px;
+  --inner-padding-end: 12px;
+  --inner-padding-top: 6px;
+  --padding-top: 12px;
+  --padding-bottom: 2px;
+  overflow: visible;
+}
+
+.form ion-input input[type='time']::-webkit-calendar-picker-indicator {
+  margin: 0;
+  filter: sepia(1) saturate(2) brightness(0.6);
+}
+
+/* Slider */
+ion-range {
+  --bar-background: var(--ion-color-step-300);
+  --bar-background-active: var(--ion-color-primary);
+  --knob-background: var(--ion-color-primary);
+  --pin-background: var(--ion-color-primary);
+  --pin-color: #ffffff;
+}
+
+/* Toggle */
+ion-toggle {
+  --track-background: var(--ion-color-step-300);
+  --track-background-checked: var(--ion-color-primary);
+  --handle-background: #fffaf0;
+  --handle-background-checked: #fffaf0;
+}
+
+/* ion-input impose son propre rayon (4px) : on augmente la spécificité. */
+ion-input.input-fill-outline.md {
+  --border-radius: 10px;
+}
+
+/* Libellés des menus et du slider : même couleur que ceux des champs
+   (les .label-text-wrapper de ion-select/ion-range sont dans le shadow DOM). */
+ion-select::part(label),
+ion-range::part(label) {
+  color: var(--ion-color-step-700);
+}
+ion-range {
+  color: var(--ion-color-step-700);
+}
+
+/* Slider : même retrait gauche que le texte des champs (55px). */
+.form ion-range {
+  padding-inline: 0;
+}
