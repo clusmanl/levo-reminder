@@ -21,6 +21,7 @@ Les données sont stockées localement sur l'appareil.
 | `npm run build` | Vérification des types et build de production |
 | `npm run test:unit` | Tests unitaires (Vitest) |
 | `npm run lint` | ESLint |
+| `npm run icons` | Régénère le logo (PNG, favicon, icônes Android et icône de notification) à partir de `resources/` |
 | `npx cap sync android` | Copie le build web dans le projet Android |
 | `npx cap open android` | Ouvre le projet dans Android Studio (JDK 17+ et Android SDK requis) |
 
@@ -32,4 +33,5 @@ Les données sont stockées localement sur l'appareil.
 - `src/services/notificationMessages.ts` : messages de notification (30 par niveau d'insistance, tirés au hasard)
 - `src/stores/medications.ts` : état et actions
 - `src/views/`, `src/components/` : interface
+- `resources/` : sources du logo (SVG) et icône de notification Android ; `scripts/generate-icons.mjs` produit les icônes
 - `tests/unit/` : tests unitaires

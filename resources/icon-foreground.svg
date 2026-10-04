@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="cream" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fffaf0"/>
+      <stop offset="1" stop-color="#ecdcbd"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#c9dde2"/>
+      <stop offset="1" stop-color="#88a9b2"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffe9a3"/>
+      <stop offset="1" stop-color="#f0b02e"/>
+    </linearGradient>
+    <clipPath id="cap"><rect x="-230" y="-105" width="460" height="210" rx="105"/></clipPath>
+    <!-- Étincelle à 4 branches, rayon 100 -->
+    <path id="star" d="M0,-100 Q14,-14 100,0 Q14,14 0,100 Q-14,14 -100,0 Q-14,-14 0,-100 Z"/>
+  </defs>
+
+  <!-- Gélule -->
+  <g transform="translate(512 512) rotate(-40)">
+    <rect x="-230" y="-91" width="460" height="210" rx="105" fill="#000" opacity="0.2"/>
+    <g clip-path="url(#cap)">
+      <rect x="-230" y="-105" width="230" height="210" fill="url(#cream)"/>
+      <rect x="0" y="-105" width="230" height="210" fill="url(#blue)"/>
+      <rect x="-5" y="-105" width="10" height="210" fill="#5b4630" opacity="0.3"/>
+      <rect x="-195" y="-80" width="390" height="24" rx="12" fill="#fff" opacity="0.55"/>
+    </g>
+    <rect x="-230" y="-105" width="460" height="210" rx="105" fill="none" stroke="#5b4630" stroke-width="10"/>
+  </g>
+
+  <!-- Étincelles -->
+  <g fill="url(#gold)" stroke="#fff6d6" stroke-width="3" stroke-linejoin="round">
+    <use xlink:href="#star" transform="translate(330 300) scale(0.95)"/>
+    <use xlink:href="#star" transform="translate(760 740) scale(0.75)"/>
+    <use xlink:href="#star" transform="translate(250 640) scale(0.42)"/>
+    <use xlink:href="#star" transform="translate(610 190) scale(0.38)"/>
+    <use xlink:href="#star" transform="translate(470 850) scale(0.36)"/>
+  </g>
+  <g fill="#ffe9a3">
+    <circle cx="440" cy="210" r="9"/>
+    <circle cx="820" cy="600" r="11"/>
+    <circle cx="215" cy="470" r="8"/>
+    <circle cx="640" cy="850" r="8"/>
+  </g>
+</svg>
