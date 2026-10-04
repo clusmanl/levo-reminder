@@ -91,12 +91,14 @@ function shift(delta: number) {
 }
 .day:disabled { opacity: .35; cursor: default; }
 .day.today { outline: 2px solid var(--ion-color-primary); outline-offset: -2px; }
-.day.taken { background: var(--levo-check-color); color: var(--levo-check-contrast); }
-.day.skipped { background: var(--levo-cross-color); color: var(--levo-check-contrast); }
-.day.missed { background: color-mix(in srgb, var(--ion-color-warning) 35%, transparent); }
 .legend { display: flex; gap: 16px; justify-content: center; margin-top: 12px; font-size: .8rem; color: var(--ion-color-medium); }
-.dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; }
-.dot.taken { background: var(--levo-check-color); }
-.dot.skipped { background: var(--levo-cross-color); }
-.dot.missed { background: var(--ion-color-warning); }
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; background: var(--status); }
+
+/* Couleur de chaque statut, partagée par les jours et la légende. */
+.taken { --status: var(--levo-check-color); }
+.skipped { --status: var(--levo-cross-color); }
+.missed { --status: var(--ion-color-warning); }
+.day.taken,
+.day.skipped { background: var(--status); color: var(--levo-check-contrast); }
+.day.missed { background: color-mix(in srgb, var(--status) 35%, transparent); }
 </style>

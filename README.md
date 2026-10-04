@@ -32,6 +32,7 @@ Les données sont stockées localement sur l'appareil.
 - `src/services/notifications.ts` : planification sur une fenêtre glissante de 14 jours, replanifiée à chaque ouverture
 - `src/services/notificationMessages.ts` : messages de notification (30 par niveau d'insistance, tirés au hasard)
 - `src/stores/medications.ts` : état et actions
+- `src/theme/` : `variables.css` (jetons de couleur) et `overrides.css` (surcharges des composants Ionic)
 - `src/views/`, `src/components/` : interface
 - `resources/` : sources du logo (SVG) et icône de notification Android ; `scripts/generate-icons.mjs` produit les icônes
 - `tests/unit/` : tests unitaires

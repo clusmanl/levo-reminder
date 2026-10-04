@@ -1,0 +1,76 @@
+/* Surcharges globales des composants Ionic (couleurs : voir variables.css). */
+
+ion-modal {
+  --background: var(--levo-beige);
+}
+
+ion-card {
+  border: 1px solid var(--ion-color-step-500);
+  box-shadow: none;
+  padding: 10px;
+}
+
+/* ----- Champs (ion-input, ion-select) ----- */
+
+ion-input,
+ion-select {
+  --background: transparent;
+  --color: var(--levo-text);
+  --placeholder-color: var(--ion-color-step-600);
+  --placeholder-opacity: 1;
+  --border-color: var(--ion-color-step-500);
+  --border-width: 1px;
+  --border-radius: 10px;
+  --highlight-color-focused: var(--ion-color-step-700);
+}
+
+/* ion-input impose son propre rayon (4px) : on augmente la spécificité. */
+ion-input.input-fill-outline.md {
+  --border-radius: 10px;
+}
+
+/* Libellés : dans le DOM pour ion-input, dans le shadow DOM (part) pour select et range. */
+ion-input .label-text-wrapper,
+ion-select::part(label),
+ion-range::part(label) {
+  color: var(--ion-color-step-700);
+}
+
+/* ----- Formulaire de rappel ----- */
+
+.form ion-item {
+  --padding-start: 12px;
+  --inner-padding-end: 12px;
+  --inner-padding-top: 6px;
+  --padding-top: 12px;
+  --padding-bottom: 2px;
+  overflow: visible;
+}
+
+.form ion-range {
+  padding-inline: 0;
+}
+
+/* Icône d'horloge du champ « heure » : teintée brun. */
+.form ion-input input[type='time']::-webkit-calendar-picker-indicator {
+  margin: 0;
+  filter: sepia(1) saturate(2) brightness(0.6);
+}
+
+/* ----- Slider et toggle ----- */
+
+ion-range {
+  color: var(--ion-color-step-700);
+  --bar-background: var(--ion-color-step-300);
+  --bar-background-active: var(--ion-color-primary);
+  --knob-background: var(--ion-color-primary);
+  --pin-background: var(--ion-color-primary);
+  --pin-color: #ffffff;
+}
+
+ion-toggle {
+  --track-background: var(--ion-color-step-300);
+  --track-background-checked: var(--ion-color-primary);
+  --handle-background: #fffaf0;
+  --handle-background-checked: #fffaf0;
+}

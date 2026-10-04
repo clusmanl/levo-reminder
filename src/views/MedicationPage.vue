@@ -189,15 +189,16 @@ ion-title { padding-inline-start: 0; }
   --background-hover: var(--levo-check-color);
   --color: var(--levo-check-contrast);
 }
-.btn-cross {
-  --background: transparent;
-  --color: var(--levo-cross-color);
-  --border-color: var(--levo-cross-color);
-  --border-width: 2px;
-}
+.btn-cross,
 .btn-delete {
   --color: var(--levo-cross-color);
   --border-color: var(--levo-cross-color);
+}
+.btn-cross {
+  --background: transparent;
+  --border-width: 2px;
+}
+.btn-delete {
   --border-width: 3px;
 }
 </style>
