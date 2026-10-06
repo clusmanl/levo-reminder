@@ -4,7 +4,7 @@ Application Android de rappels de prise de médicaments. Ionic 8, Vue 3, Capacit
 
 ## Fonctionnalités
 
-- Ajout et suppression de rappels ; une page générique par médicament
+- Ajout et suppression de rappels ; une page générique par médicament, renommable en touchant son titre
 - Fréquence : tous les jours, certains jours de la semaine, ou tous les N jours
 - Notification locale à l'heure choisie ; un clic ouvre la page du médicament
 - Relances si la notification est ignorée (nombre et délai réglables par médicament), avec des messages de plus en plus insistants

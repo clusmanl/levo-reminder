@@ -5,7 +5,20 @@
         <ion-buttons slot="start">
           <ion-back-button default-href="/home" text="" />
         </ion-buttons>
-        <ion-title>{{ med?.name ?? 'Médicament' }}</ion-title>
+        <ion-title v-if="!editing" class="editable-title" @click="startEdit">{{ title }}</ion-title>
+        <ion-title v-else>
+          <ion-input
+            ref="titleInput"
+            v-model="editName"
+            class="title-input"
+            aria-label="Nom du médicament"
+            :maxlength="40"
+            enterkeyhint="done"
+            @ion-blur="commitRename"
+            @keyup.enter="blurTitleInput"
+            @keyup.escape="cancelRename"
+          />
+        </ion-title>
       </ion-toolbar>
     </ion-header>
 
@@ -72,11 +85,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, onBeforeUnmount } from 'vue';
+import { computed, nextTick, ref, watch, onBeforeUnmount } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonContent, IonCard,
-  IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonButton, IonIcon,
+  IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonButton, IonIcon, IonInput,
   actionSheetController, alertController,
 } from '@ionic/vue';
 import { checkmark, close, trashOutline } from 'ionicons/icons';
@@ -84,7 +97,7 @@ import MedicationForm from '@/components/MedicationForm.vue';
 import MonthCalendar from '@/components/MonthCalendar.vue';
 import { useMedications } from '@/stores/medications';
 import {
-  clone, dateKey, isDue, parseDateKey, type IntakeStatus, type MedicationDraft,
+  clone, dateKey, isDue, parseDateKey, resolveRename, type IntakeStatus, type MedicationDraft,
 } from '@/models/medication';
 
 const route = useRoute();
@@ -136,6 +149,37 @@ onBeforeUnmount(() => {
   }
 });
 
+/* ----- renommage depuis le titre : validé quand le champ perd le focus ----- */
+
+const title = computed(() => draft.value.name?.trim() || med.value?.name || 'Médicament');
+const editing = ref(false);
+const editName = ref('');
+const titleInput = ref<InstanceType<typeof IonInput> | null>(null);
+
+async function startEdit() {
+  if (!med.value) return;
+  editName.value = title.value;
+  editing.value = true;
+  await nextTick();
+  await titleInput.value?.$el.setFocus();
+  (await titleInput.value?.$el.getInputElement())?.select();
+}
+
+function commitRename() {
+  if (!editing.value) return; // déjà annulé (Échap)
+  editing.value = false;
+  const name = resolveRename(editName.value, title.value);
+  if (name) draft.value = { ...draft.value, name }; // enregistré par la sauvegarde automatique
+}
+
+function cancelRename() {
+  editing.value = false;
+}
+
+async function blurTitleInput() {
+  (await titleInput.value?.$el.getInputElement())?.blur();
+}
+
 /* ----- prises ----- */
 
 function mark(status: IntakeStatus) {
@@ -179,6 +223,11 @@ async function confirmDelete() {
 
 <style scoped>
 ion-title { padding-inline-start: 0; }
+.editable-title { cursor: pointer; }
+.title-input {
+  font-size: 20px; font-weight: 500; min-height: 40px;
+  --padding-start: 0; --padding-end: 0; --border-width: 0; --highlight-height: 0;
+}
 .state { font-size: 1.05rem; margin: 0 0 16px; }
 .actions { display: flex; gap: 24px; justify-content: center; }
 .actions ion-button { --border-radius: 50%; width: 76px; height: 76px; }

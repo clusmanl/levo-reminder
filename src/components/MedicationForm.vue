@@ -102,6 +102,14 @@ const draft = reactive<MedicationDraft>(clone(props.modelValue));
 
 watch(draft, () => emit('update:modelValue', clone(draft)), { deep: true });
 
+// Le parent peut modifier le brouillon (ex. renommage depuis le titre de la page).
+watch(
+  () => props.modelValue,
+  (value) => {
+    if (JSON.stringify(value) !== JSON.stringify(draft)) Object.assign(draft, clone(value));
+  },
+);
+
 function setKind(kind: MedicationDraft['frequency']['kind']) {
   if (kind === draft.frequency.kind) return;
   if (kind === 'daily') draft.frequency = { kind };

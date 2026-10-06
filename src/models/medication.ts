@@ -102,3 +102,9 @@ export function describeFrequency(f: Frequency): string {
 export function clone<T>(v: T): T {
   return JSON.parse(JSON.stringify(v));
 }
+
+/** Nouveau nom à enregistrer (sans espaces superflus), ou null s'il est vide ou inchangé. */
+export function resolveRename(input: string, current: string): string | null {
+  const name = input.trim();
+  return name && name !== current ? name : null;
+}

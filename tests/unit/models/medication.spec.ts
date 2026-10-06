@@ -8,6 +8,7 @@ import {
   isDue,
   newDraft,
   parseDateKey,
+  resolveRename,
   type Frequency,
   type Medication,
 } from '@/models/medication';
@@ -99,5 +100,21 @@ describe('clone / newDraft', () => {
     expect(a).toMatchObject({ name: '', time: '10:00', maxRepeats: 3, repeatIntervalMin: 15, enabled: true });
     a.frequency = { kind: 'weekdays', days: [1] };
     expect(newDraft().frequency).toEqual({ kind: 'daily' });
+  });
+});
+
+describe('resolveRename', () => {
+  it('renvoie le nouveau nom sans espaces superflus', () => {
+    expect(resolveRename('  Vitamine D  ', 'Lévo')).toBe('Vitamine D');
+  });
+
+  it('renvoie null si le nom est vide ou ne contient que des espaces', () => {
+    expect(resolveRename('', 'Lévo')).toBeNull();
+    expect(resolveRename('   ', 'Lévo')).toBeNull();
+  });
+
+  it('renvoie null si le nom est inchangé', () => {
+    expect(resolveRename('Lévo', 'Lévo')).toBeNull();
+    expect(resolveRename(' Lévo ', 'Lévo')).toBeNull();
   });
 });
