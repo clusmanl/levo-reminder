@@ -5,6 +5,8 @@ ion-modal {
 }
 
 ion-card {
+  /* Listes et items posés dans une carte : fond transparent (celui de la carte). */
+  --ion-item-background: transparent;
   border: 1px solid var(--ion-color-step-500);
   box-shadow: none;
   padding: 10px;

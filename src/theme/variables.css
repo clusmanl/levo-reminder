@@ -7,6 +7,7 @@
   /* ----- Palette Levo ----- */
   --levo-beige: #f3e9d7;
   --levo-beige-dark: #e8dbc2;
+  --levo-card: #faf4e8; /* fond des cartes : un cran plus clair que le beige pour le contraste */
   --levo-text: #3b3022;
 
   /* Coche (prise) et croix (ignoré) : boutons, calendrier, liste d'accueil. */
@@ -25,7 +26,7 @@
   --ion-toolbar-border-color: var(--levo-beige-dark);
 
   --ion-item-background: var(--levo-beige);
-  --ion-card-background: var(--levo-beige);
+  --ion-card-background: var(--levo-card);
   --ion-item-border-color: var(--levo-beige-dark);
   --ion-border-color: var(--levo-beige-dark);
 
