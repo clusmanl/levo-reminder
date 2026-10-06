@@ -30,7 +30,7 @@ Les données sont stockées localement sur l'appareil.
 - `src/models/medication.ts` : types, dates, fréquences
 - `src/services/repository.ts` : stockage derrière l'interface `MedicationRepository` (point d'extension pour une synchronisation cloud)
 - `src/services/notifications.ts` : planification sur une fenêtre glissante de 14 jours, replanifiée à chaque ouverture
-- `src/services/notificationMessages.ts` : messages de notification (30 par niveau d'insistance, tirés au hasard)
+- `src/services/notificationMessages.ts` : messages de notification (30 par niveau d'insistance, de plus en plus insultants, tirés au hasard)
 - `src/stores/medications.ts` : état et actions
 - `src/theme/` : `variables.css` (jetons de couleur) et `overrides.css` (surcharges des composants Ionic)
 - `src/views/`, `src/components/` : interface
