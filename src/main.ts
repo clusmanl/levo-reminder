@@ -35,6 +35,8 @@ const store = useMedications();
       hideNavigationBar();
       store.rescheduleAll();
     },
+    // Bouton « Pris » de la notification → enregistré sans ouvrir la page.
+    (medId, date) => store.setIntake(medId, date, 'taken'),
   );
   await router.isReady();
   app.mount('#app');

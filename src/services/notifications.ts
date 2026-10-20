@@ -5,6 +5,8 @@ import { addDays, dateKey, isDue, type Medication } from '@/models/medication';
 import { MESSAGES } from './notificationMessages';
 
 const CHANNEL_ID = 'levo-reminders';
+const ACTION_TYPE_ID = 'levo-intake';
+const ACTION_TAKEN = 'taken';
 /** Nombre de jours planifiés à l'avance (re-planifié à chaque ouverture de l'app). */
 const WINDOW_DAYS = 14;
 const ID_MED = 100_000;
@@ -50,7 +52,11 @@ export async function ensurePermissions(): Promise<boolean> {
   return true;
 }
 
-export async function initNotifications(onOpen: (medId: string) => void, onResume: () => void) {
+export async function initNotifications(
+  onOpen: (medId: string) => void,
+  onResume: () => void,
+  onTaken: (medId: string, date: string) => void = () => {},
+) {
   if (!native()) return;
 
   await LocalNotifications.createChannel({
@@ -62,9 +68,17 @@ export async function initNotifications(onOpen: (medId: string) => void, onResum
     vibration: true,
   });
 
+  // Bouton « Pris » directement dans la notification.
+  await LocalNotifications.registerActionTypes({
+    types: [{ id: ACTION_TYPE_ID, actions: [{ id: ACTION_TAKEN, title: 'Pris ✓', foreground: false }] }],
+  });
+
   await LocalNotifications.addListener('localNotificationActionPerformed', (event) => {
     const medId = event.notification.extra?.medId as string | undefined;
-    if (medId) onOpen(medId);
+    if (!medId) return;
+    const date = event.notification.extra?.date as string | undefined;
+    if (event.actionId === ACTION_TAKEN && date) onTaken(medId, date);
+    else onOpen(medId);
   });
 
   await App.addListener('resume', onResume);
@@ -111,6 +125,7 @@ export async function scheduleForMedication(med: Medication) {
         title,
         body,
         channelId: CHANNEL_ID,
+        actionTypeId: ACTION_TYPE_ID,
         schedule: { at, allowWhileIdle: true },
         extra: { medId: med.id, date: key, level },
       });

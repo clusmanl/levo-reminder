@@ -80,7 +80,7 @@
     </ion-item>
 
     <ion-item v-if="showEnabled">
-      <ion-toggle v-model="draft.enabled">Rappel activé</ion-toggle>
+      <ion-toggle :checked="draft.enabled" @ion-change="setEnabled($event)">Rappel activé</ion-toggle>
     </ion-item>
   </ion-list>
 </template>
@@ -89,6 +89,7 @@
 import { reactive, watch } from 'vue';
 import {
   IonList, IonItem, IonInput, IonSelect, IonSelectOption, IonChip, IonRange, IonToggle,
+  alertController,
 } from '@ionic/vue';
 import {
   MAX_REPEATS, REPEAT_INTERVAL_CHOICES, WEEKDAY_ORDER, WEEKDAY_SHORT,
@@ -109,6 +110,30 @@ watch(
     if (JSON.stringify(value) !== JSON.stringify(draft)) Object.assign(draft, clone(value));
   },
 );
+
+async function setEnabled(event: CustomEvent<{ checked: boolean }>) {
+  const checked = event.detail.checked;
+  if (checked === draft.enabled) return;
+  if (checked) {
+    draft.enabled = true;
+    return;
+  }
+  // Désactiver coupe toutes les notifications : on demande confirmation.
+  const toggle = event.target as HTMLIonToggleElement;
+  toggle.checked = true; // reste activé tant que l'utilisateur n'a pas confirmé
+  const alert = await alertController.create({
+    header: 'Désactiver ce rappel ?',
+    message: 'Tu ne recevras plus aucune notification pour ce médicament.',
+    buttons: [
+      { text: 'Annuler', role: 'cancel' },
+      {
+        text: 'Désactiver', role: 'destructive',
+        handler: () => { draft.enabled = false; toggle.checked = false; },
+      },
+    ],
+  });
+  await alert.present();
+}
 
 function setKind(kind: MedicationDraft['frequency']['kind']) {
   if (kind === draft.frequency.kind) return;
