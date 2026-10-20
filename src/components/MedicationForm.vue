@@ -111,9 +111,11 @@ watch(
   },
 );
 
+let confirming = false;
+
 async function setEnabled(event: CustomEvent<{ checked: boolean }>) {
   const checked = event.detail.checked;
-  if (checked === draft.enabled) return;
+  if (checked === draft.enabled || confirming) return;
   if (checked) {
     draft.enabled = true;
     return;
@@ -121,6 +123,7 @@ async function setEnabled(event: CustomEvent<{ checked: boolean }>) {
   // Désactiver coupe toutes les notifications : on demande confirmation.
   const toggle = event.target as HTMLIonToggleElement;
   toggle.checked = true; // reste activé tant que l'utilisateur n'a pas confirmé
+  confirming = true;
   const alert = await alertController.create({
     header: 'Désactiver ce rappel ?',
     message: 'Tu ne recevras plus aucune notification pour ce médicament.',
@@ -132,6 +135,7 @@ async function setEnabled(event: CustomEvent<{ checked: boolean }>) {
       },
     ],
   });
+  alert.onDidDismiss().then(() => { confirming = false; });
   await alert.present();
 }
 

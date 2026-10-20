@@ -101,7 +101,16 @@ export async function cancelForMedication(med: Pick<Medication, 'id' | 'numId'>)
 }
 
 /** Re-planifie toutes les notifications d'un médicament pour les prochains jours. */
-export async function scheduleForMedication(med: Medication) {
+export function scheduleForMedication(med: Medication): Promise<void> {
+  // Les replanifications s'enchaînent : sinon « Pris » et la reprise de l'app s'entremêlent.
+  const run = queue.then(() => doSchedule(med));
+  queue = run.catch(() => {});
+  return run;
+}
+
+let queue: Promise<void> = Promise.resolve();
+
+async function doSchedule(med: Medication) {
   if (!native()) return;
   await cancelForMedication(med);
   if (!med.enabled) return;

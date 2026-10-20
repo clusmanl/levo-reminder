@@ -13,6 +13,9 @@ const LocalNotifications = vi.hoisted(() => ({
   getDeliveredNotifications: vi.fn(),
   removeDeliveredNotifications: vi.fn(),
   schedule: vi.fn(),
+  createChannel: vi.fn(),
+  registerActionTypes: vi.fn(),
+  addListener: vi.fn(),
 }));
 
 vi.mock('@capacitor/core', () => ({ Capacitor: { isNativePlatform: () => native.value } }));
@@ -22,6 +25,7 @@ vi.mock('@capacitor/local-notifications', () => ({ LocalNotifications }));
 import {
   cancelForMedication,
   ensurePermissions,
+  initNotifications,
   messageFor,
   notificationId,
   scheduleForMedication,
@@ -44,6 +48,7 @@ const scheduled = () =>
     id: number;
     title: string;
     schedule: { at: Date };
+    actionTypeId?: string;
     extra: { medId: string; date: string; level: number };
   }>;
 
@@ -162,6 +167,58 @@ describe('cancelForMedication', () => {
     LocalNotifications.getDeliveredNotifications.mockResolvedValue({ notifications: [mine, other] });
     await cancelForMedication({ id: 'med-1', numId: 7 });
     expect(LocalNotifications.removeDeliveredNotifications).toHaveBeenCalledWith({ notifications: [mine] });
+  });
+});
+
+describe('actions de notification', () => {
+  type Listener = (event: { actionId: string; notification: { extra?: Record<string, unknown> } }) => void;
+
+  async function init() {
+    const onOpen = vi.fn();
+    const onResume = vi.fn();
+    const onTaken = vi.fn();
+    await initNotifications(onOpen, onResume, onTaken);
+    const call = LocalNotifications.addListener.mock.calls.find(
+      ([name]) => name === 'localNotificationActionPerformed',
+    );
+    return { onOpen, onTaken, listener: call?.[1] as Listener };
+  }
+
+  it("enregistre un type d'action contenant l'action « taken »", async () => {
+    await init();
+    expect(LocalNotifications.registerActionTypes).toHaveBeenCalledTimes(1);
+    const { types } = LocalNotifications.registerActionTypes.mock.calls[0][0];
+    expect(types).toHaveLength(1);
+    expect(types[0].actions.map((a: { id: string }) => a.id)).toContain('taken');
+  });
+
+  it("n'enregistre rien hors plateforme native", async () => {
+    native.value = false;
+    await initNotifications(vi.fn(), vi.fn(), vi.fn());
+    expect(LocalNotifications.registerActionTypes).not.toHaveBeenCalled();
+  });
+
+  it("chaque notification planifiée porte l'actionTypeId enregistré", async () => {
+    await init();
+    const [{ types }] = LocalNotifications.registerActionTypes.mock.calls[0];
+    await scheduleForMedication(makeMed({ maxRepeats: 1 }));
+    const list = scheduled();
+    expect(list.length).toBeGreaterThan(0);
+    expect(list.every((n) => n.actionTypeId === types[0].id)).toBe(true);
+  });
+
+  it("l'action « taken » appelle onTaken(medId, date) sans appeler onOpen", async () => {
+    const { listener, onOpen, onTaken } = await init();
+    listener({ actionId: 'taken', notification: { extra: { medId: 'med-1', date: '2026-10-03' } } });
+    expect(onTaken).toHaveBeenCalledWith('med-1', '2026-10-03');
+    expect(onOpen).not.toHaveBeenCalled();
+  });
+
+  it('un clic simple appelle onOpen(medId) sans appeler onTaken', async () => {
+    const { listener, onOpen, onTaken } = await init();
+    listener({ actionId: 'tap', notification: { extra: { medId: 'med-1', date: '2026-10-03' } } });
+    expect(onOpen).toHaveBeenCalledWith('med-1');
+    expect(onTaken).not.toHaveBeenCalled();
   });
 });
 
