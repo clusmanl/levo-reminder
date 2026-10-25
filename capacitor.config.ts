@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.levo.reminder',
+  appId: 'com.clusmanl.levoreminder',
   appName: 'Levo Reminder',
   webDir: 'dist',
   plugins: {

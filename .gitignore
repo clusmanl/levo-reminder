@@ -34,3 +34,6 @@ npm-debug.log*
 
 # PNG générés par `npm run icons`
 /resources/*.png
+
+levo-release.jks
+Release
