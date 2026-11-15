@@ -1,3 +1,5 @@
+import { t } from '@/i18n';
+
 export type Frequency =
   | { kind: 'daily' }
   | { kind: 'weekdays'; days: number[] } // 0 = dimanche … 6 = samedi (Date#getDay)
@@ -70,7 +72,6 @@ export function daysBetween(fromKey: string, toKey: string): number {
 /* ---------- fréquence ---------- */
 
 export const WEEKDAY_ORDER = [1, 2, 3, 4, 5, 6, 0];
-export const WEEKDAY_SHORT = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
 
 export function isDue(med: Medication, key: string): boolean {
   const f = med.frequency;
@@ -89,13 +90,13 @@ export function isDue(med: Medication, key: string): boolean {
 export function describeFrequency(f: Frequency): string {
   switch (f.kind) {
     case 'daily':
-      return 'Tous les jours';
+      return t.frequency.daily;
     case 'weekdays':
       return f.days.length
-        ? WEEKDAY_ORDER.filter((d) => f.days.includes(d)).map((d) => WEEKDAY_SHORT[d]).join(', ')
-        : 'Aucun jour';
+        ? WEEKDAY_ORDER.filter((d) => f.days.includes(d)).map((d) => t.frequency.weekdaysShort[d]).join(', ')
+        : t.frequency.noDay;
     case 'interval':
-      return f.everyDays === 1 ? 'Tous les jours' : `Tous les ${f.everyDays} jours`;
+      return f.everyDays === 1 ? t.frequency.daily : t.frequency.everyDays(f.everyDays);
   }
 }
 

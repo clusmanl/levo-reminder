@@ -2,6 +2,7 @@ import { Capacitor } from '@capacitor/core';
 import { App } from '@capacitor/app';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { addDays, dateKey, isDue, type Medication } from '@/models/medication';
+import { locale, t } from '@/i18n';
 import { MESSAGES } from './notificationMessages';
 
 const CHANNEL_ID = 'levo-reminders';
@@ -22,7 +23,7 @@ export function messageFor(
   level: number,
   random: () => number = Math.random,
 ): { title: string; body: string } {
-  const pool = MESSAGES[Math.min(Math.max(level, 0), MESSAGES.length - 1)];
+  const pool = MESSAGES[locale][Math.min(Math.max(level, 0), MESSAGES[locale].length - 1)];
   const [title, body] = pool[Math.floor(random() * pool.length)];
   const fill = (text: string) => text.replaceAll('{name}', name);
   return { title: fill(title), body: fill(body) };
@@ -61,8 +62,8 @@ export async function initNotifications(
 
   await LocalNotifications.createChannel({
     id: CHANNEL_ID,
-    name: 'Rappels de médicaments',
-    description: 'Rappels quotidiens et relances',
+    name: t.notifications.channelName,
+    description: t.notifications.channelDescription,
     importance: 5,
     visibility: 1,
     vibration: true,
@@ -70,7 +71,7 @@ export async function initNotifications(
 
   // Bouton « Pris » directement dans la notification.
   await LocalNotifications.registerActionTypes({
-    types: [{ id: ACTION_TYPE_ID, actions: [{ id: ACTION_TAKEN, title: 'Pris ✓', foreground: false }] }],
+    types: [{ id: ACTION_TYPE_ID, actions: [{ id: ACTION_TAKEN, title: t.notifications.takenAction, foreground: false }] }],
   });
 
   await LocalNotifications.addListener('localNotificationActionPerformed', (event) => {

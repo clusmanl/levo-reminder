@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { newDraft, type Medication } from '@/models/medication';
+import { setLocale } from '@/i18n';
 import { MESSAGES } from '@/services/notificationMessages';
 
 const native = vi.hoisted(() => ({ value: true }));
@@ -65,7 +66,7 @@ afterEach(() => vi.useRealTimers());
 
 describe('messageFor', () => {
   it('remplace {name} dans le titre et le corps', () => {
-    for (let level = 0; level < MESSAGES.length; level++) {
+    for (let level = 0; level < MESSAGES.fr.length; level++) {
       for (const r of [0, 0.5, 0.999]) {
         const { title, body } = messageFor('Lévo', level, () => r);
         expect(`${title} ${body}`).not.toContain('{name}');
@@ -76,14 +77,23 @@ describe('messageFor', () => {
   it('choisit le message selon le tirage aléatoire, dans le niveau demandé', () => {
     const first = messageFor('X', 2, () => 0);
     const last = messageFor('X', 2, () => 0.999);
-    expect(first.title).toBe(MESSAGES[2][0][0].replaceAll('{name}', 'X'));
-    expect(last.title).toBe(MESSAGES[2][29][0].replaceAll('{name}', 'X'));
+    expect(first.title).toBe(MESSAGES.fr[2][0][0].replaceAll('{name}', 'X'));
+    expect(last.title).toBe(MESSAGES.fr[2][29][0].replaceAll('{name}', 'X'));
   });
 
   it('reste sur le dernier niveau au-delà, et sur le premier en dessous de 0', () => {
-    const lastLevel = MESSAGES.length - 1;
+    const lastLevel = MESSAGES.fr.length - 1;
     expect(messageFor('X', 99, () => 0.3)).toEqual(messageFor('X', lastLevel, () => 0.3));
     expect(messageFor('X', -1, () => 0.3)).toEqual(messageFor('X', 0, () => 0.3));
+  });
+});
+
+describe('messageFor en anglais', () => {
+  it('pioche dans le jeu anglais selon la locale', () => {
+    setLocale('en');
+    const { title } = messageFor('X', 2, () => 0);
+    expect(title).toBe(MESSAGES.en[2][0][0].replaceAll('{name}', 'X'));
+    expect(title).not.toBe(MESSAGES.fr[2][0][0].replaceAll('{name}', 'X'));
   });
 });
 

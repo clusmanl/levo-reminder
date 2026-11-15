@@ -2,13 +2,13 @@
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <ion-title>Levo Reminder</ion-title>
+        <ion-title>{{ t.home.title }}</ion-title>
       </ion-toolbar>
     </ion-header>
 
     <ion-content>
       <div v-if="!medications.length" class="empty">
-        <p>Aucun rappel pour l'instant.<br />Appuie sur + pour ajouter un médicament.</p>
+        <p>{{ t.home.emptyLine1 }}<br />{{ t.home.emptyLine2 }}</p>
       </div>
 
       <ion-list v-else>
@@ -18,7 +18,7 @@
             <ion-label>
               <h2>{{ med.name }}</h2>
               <p>{{ med.time }} · {{ describeFrequency(med.frequency) }}</p>
-              <p v-if="!med.enabled">Rappel désactivé</p>
+              <p v-if="!med.enabled">{{ t.home.disabled }}</p>
             </ion-label>
             <ion-note slot="end">{{ statusOf(med).label }}</ion-note>
           </ion-item>
@@ -31,7 +31,7 @@
       </ion-list>
 
       <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-        <ion-fab-button aria-label="Ajouter un médicament" @click="openAdd">
+        <ion-fab-button :aria-label="t.home.addAria" @click="openAdd">
           <ion-icon :icon="add" />
         </ion-fab-button>
       </ion-fab>
@@ -40,11 +40,11 @@
         <ion-header>
           <ion-toolbar>
             <ion-buttons slot="start">
-              <ion-button @click="adding = false">Annuler</ion-button>
+              <ion-button @click="adding = false">{{ t.common.cancel }}</ion-button>
             </ion-buttons>
-            <ion-title>Nouveau rappel</ion-title>
+            <ion-title>{{ t.home.newTitle }}</ion-title>
             <ion-buttons slot="end">
-              <ion-button :strong="true" :disabled="!draft.name.trim()" @click="create">Ajouter</ion-button>
+              <ion-button :strong="true" :disabled="!draft.name.trim()" @click="create">{{ t.home.add }}</ion-button>
             </ion-buttons>
           </ion-toolbar>
         </ion-header>
@@ -72,6 +72,7 @@ import { useMedications } from '@/stores/medications';
 import {
   describeFrequency, isDue, newDraft, dateKey, type Medication, type MedicationDraft,
 } from '@/models/medication';
+import { t } from '@/i18n';
 
 const router = useRouter();
 const { medications, add: addMedication, remove } = useMedications();
@@ -92,19 +93,19 @@ async function create() {
 
 function statusOf(med: Medication) {
   const entry = med.log[dateKey()];
-  if (entry?.status === 'taken') return { icon: checkmarkCircle, cls: 'is-taken', label: 'Pris' };
-  if (entry?.status === 'skipped') return { icon: closeCircle, cls: 'is-skipped', label: 'Ignoré' };
-  if (!isDue(med, dateKey())) return { icon: removeCircleOutline, cls: 'is-off', label: 'Pas aujourd\'hui' };
-  return { icon: ellipseOutline, cls: 'is-pending', label: 'À prendre' };
+  if (entry?.status === 'taken') return { icon: checkmarkCircle, cls: 'is-taken', label: t.home.statusTaken };
+  if (entry?.status === 'skipped') return { icon: closeCircle, cls: 'is-skipped', label: t.home.statusSkipped };
+  if (!isDue(med, dateKey())) return { icon: removeCircleOutline, cls: 'is-off', label: t.home.statusOff };
+  return { icon: ellipseOutline, cls: 'is-pending', label: t.home.statusPending };
 }
 
 async function confirmDelete(id: string, name: string) {
   const alert = await alertController.create({
-    header: 'Supprimer ce rappel ?',
-    message: `« ${name} » et tout son historique seront supprimés.`,
+    header: t.home.deleteHeader,
+    message: t.home.deleteMessage(name),
     buttons: [
-      { text: 'Annuler', role: 'cancel' },
-      { text: 'Supprimer', role: 'destructive', handler: () => remove(id) },
+      { text: t.common.cancel, role: 'cancel' },
+      { text: t.common.delete, role: 'destructive', handler: () => remove(id) },
     ],
   });
   await alert.present();

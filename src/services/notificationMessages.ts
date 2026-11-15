@@ -6,7 +6,11 @@
  *   rappel initial, les suivants sont les relances successives.
  * - `{name}` est remplacé par le nom du médicament.
  * - Au-delà du dernier niveau, on reste sur le dernier.
+ * - `MESSAGES` contient un jeu par langue ; le jeu anglais est dans `notificationMessages.en.ts`.
  */
+import type { Locale } from '@/i18n';
+import { MESSAGES_EN } from './notificationMessages.en';
+
 export type NotificationMessage = readonly [title: string, body: string];
 
 /** Niveau 0 : le rappel initial, tout en douceur. */
@@ -247,7 +251,7 @@ const LEVEL_6: NotificationMessage[] = [
   ["💩 FINAL EN BEAUTÉ, ESPÈCE DE GROS CON", "Prends {name} ou je recommence demain. Et le jour d'après. Enfoiré."],
 ];
 
-export const MESSAGES: readonly (readonly NotificationMessage[])[] = [
+const MESSAGES_FR: readonly (readonly NotificationMessage[])[] = [
   LEVEL_0,
   LEVEL_1,
   LEVEL_2,
@@ -256,3 +260,8 @@ export const MESSAGES: readonly (readonly NotificationMessage[])[] = [
   LEVEL_5,
   LEVEL_6,
 ];
+
+export const MESSAGES: Record<Locale, readonly (readonly NotificationMessage[])[]> = {
+  fr: MESSAGES_FR,
+  en: MESSAGES_EN,
+};

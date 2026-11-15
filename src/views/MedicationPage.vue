@@ -11,7 +11,7 @@
             ref="titleInput"
             v-model="editName"
             class="title-input"
-            aria-label="Nom du médicament"
+            :aria-label="t.medication.nameAria"
             :maxlength="40"
             enterkeyhint="done"
             @ion-blur="commitRename"
@@ -26,22 +26,21 @@
       <!-- Prise du jour -->
       <ion-card>
         <ion-card-header>
-          <ion-card-subtitle>Aujourd'hui</ion-card-subtitle>
+          <ion-card-subtitle>{{ t.medication.today }}</ion-card-subtitle>
           <ion-card-title>{{ todayLabel }}</ion-card-title>
         </ion-card-header>
         <ion-card-content>
           <p v-if="todayEntry" class="state">
-            {{ todayEntry.status === 'taken' ? 'Pris' : 'Ignoré' }}
-            à {{ timeOf(todayEntry.at) }}
+            {{ t.medication.stateAt(todayEntry.status === 'taken', timeOf(todayEntry.at)) }}
           </p>
-          <p v-else-if="!isDue(med, todayKey)" class="state">Pas de prise prévue aujourd'hui.</p>
-          <p v-else class="state">Prévu à {{ med.time }}. As-tu pris {{ med.name }} ?</p>
+          <p v-else-if="!isDue(med, todayKey)" class="state">{{ t.medication.notDueToday }}</p>
+          <p v-else class="state">{{ t.medication.planned(med.time, med.name) }}</p>
 
           <div class="actions">
-            <ion-button class="btn-cross" fill="outline" size="large" aria-label="Ignorer" @click="mark('skipped')">
+            <ion-button class="btn-cross" fill="outline" size="large" :aria-label="t.medication.skipAria" @click="mark('skipped')">
               <ion-icon slot="icon-only" :icon="close" />
             </ion-button>
-            <ion-button class="btn-check" size="large" aria-label="Pris" @click="mark('taken')">
+            <ion-button class="btn-check" size="large" :aria-label="t.medication.takeAria" @click="mark('taken')">
               <ion-icon slot="icon-only" :icon="checkmark" />
             </ion-button>
           </div>
@@ -51,8 +50,8 @@
       <!-- Calendrier -->
       <ion-card>
         <ion-card-header>
-          <ion-card-title>Historique</ion-card-title>
-          <ion-card-subtitle>{{ takenThisMonth }} prise(s) ce mois-ci</ion-card-subtitle>
+          <ion-card-title>{{ t.medication.history }}</ion-card-title>
+          <ion-card-subtitle>{{ t.medication.takenThisMonth(takenThisMonth) }}</ion-card-subtitle>
         </ion-card-header>
         <ion-card-content>
           <MonthCalendar
@@ -67,19 +66,19 @@
       <!-- Réglages -->
       <ion-card>
         <ion-card-header>
-          <ion-card-title>Réglages</ion-card-title>
+          <ion-card-title>{{ t.medication.settings }}</ion-card-title>
         </ion-card-header>
         <MedicationForm v-model="draft" :show-enabled="true" />
       </ion-card>
 
       <ion-button expand="block" fill="outline" class="btn-delete ion-margin-top" @click="confirmDelete">
         <ion-icon slot="start" :icon="trashOutline" />
-        Supprimer ce rappel
+        {{ t.medication.deleteButton }}
       </ion-button>
     </ion-content>
 
     <ion-content v-else class="ion-padding">
-      <p>Ce médicament n'existe plus.</p>
+      <p>{{ t.medication.notFound }}</p>
     </ion-content>
   </ion-page>
 </template>
@@ -99,6 +98,7 @@ import { useMedications } from '@/stores/medications';
 import {
   clone, dateKey, isDue, parseDateKey, resolveRename, type IntakeStatus, type MedicationDraft,
 } from '@/models/medication';
+import { dateLocale, t } from '@/i18n';
 
 const route = useRoute();
 const router = useRouter();
@@ -110,7 +110,7 @@ const todayKey = dateKey();
 const todayEntry = computed(() => med.value?.log[todayKey]);
 
 const todayLabel = computed(() => {
-  const s = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+  const s = new Date().toLocaleDateString(dateLocale, { weekday: 'long', day: 'numeric', month: 'long' });
   return s.charAt(0).toUpperCase() + s.slice(1);
 });
 
@@ -120,7 +120,7 @@ const takenThisMonth = computed(() => {
 });
 
 const timeOf = (iso: string) =>
-  new Date(iso).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+  new Date(iso).toLocaleTimeString(dateLocale, { hour: '2-digit', minute: '2-digit' });
 
 /* ----- réglages : sauvegarde automatique (anti-rebond) ----- */
 
@@ -151,7 +151,7 @@ onBeforeUnmount(() => {
 
 /* ----- renommage depuis le titre : validé quand le champ perd le focus ----- */
 
-const title = computed(() => draft.value.name?.trim() || med.value?.name || 'Médicament');
+const title = computed(() => draft.value.name?.trim() || med.value?.name || t.medication.fallbackTitle);
 const editing = ref(false);
 const editName = ref('');
 const titleInput = ref<InstanceType<typeof IonInput> | null>(null);
@@ -188,14 +188,14 @@ function mark(status: IntakeStatus) {
 }
 
 async function pickDay(key: string) {
-  const label = parseDateKey(key).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+  const label = parseDateKey(key).toLocaleDateString(dateLocale, { weekday: 'long', day: 'numeric', month: 'long' });
   const sheet = await actionSheetController.create({
     header: label,
     buttons: [
-      { text: 'Pris ✓', handler: () => void store.setIntake(id.value, key, 'taken') },
-      { text: 'Ignoré ✗', handler: () => void store.setIntake(id.value, key, 'skipped') },
-      { text: 'Effacer', role: 'destructive', handler: () => void store.setIntake(id.value, key, null) },
-      { text: 'Annuler', role: 'cancel' },
+      { text: t.medication.sheetTaken, handler: () => void store.setIntake(id.value, key, 'taken') },
+      { text: t.medication.sheetSkipped, handler: () => void store.setIntake(id.value, key, 'skipped') },
+      { text: t.medication.sheetClear, role: 'destructive', handler: () => void store.setIntake(id.value, key, null) },
+      { text: t.common.cancel, role: 'cancel' },
     ],
   });
   await sheet.present();
@@ -203,12 +203,12 @@ async function pickDay(key: string) {
 
 async function confirmDelete() {
   const alert = await alertController.create({
-    header: 'Supprimer ce rappel ?',
-    message: 'Le médicament et tout son historique seront supprimés.',
+    header: t.medication.deleteHeader,
+    message: t.medication.deleteMessage,
     buttons: [
-      { text: 'Annuler', role: 'cancel' },
+      { text: t.common.cancel, role: 'cancel' },
       {
-        text: 'Supprimer', role: 'destructive',
+        text: t.common.delete, role: 'destructive',
         handler: async () => {
           clearTimeout(timer);
           await store.remove(id.value);

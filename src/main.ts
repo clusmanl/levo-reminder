@@ -18,6 +18,9 @@ import './theme/overrides.css';
 import { useMedications } from './stores/medications';
 import { initNotifications } from './services/notifications';
 import { hideNavigationBar } from './services/systemBars';
+import { locale } from './i18n';
+
+document.documentElement.lang = locale;
 
 const app = createApp(App)
   .use(IonicVue)

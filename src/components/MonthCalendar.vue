@@ -1,17 +1,17 @@
 <template>
   <div class="cal">
     <div class="head">
-      <ion-button fill="clear" size="small" aria-label="Mois précédent" @click="shift(-1)">
+      <ion-button fill="clear" size="small" :aria-label="t.calendar.previousMonth" @click="shift(-1)">
         <ion-icon slot="icon-only" :icon="chevronBack" />
       </ion-button>
       <strong class="title">{{ title }}</strong>
-      <ion-button fill="clear" size="small" aria-label="Mois suivant" @click="shift(1)">
+      <ion-button fill="clear" size="small" :aria-label="t.calendar.nextMonth" @click="shift(1)">
         <ion-icon slot="icon-only" :icon="chevronForward" />
       </ion-button>
     </div>
 
     <div class="grid">
-      <span v-for="(l, i) in LABELS" :key="i" class="dow">{{ l }}</span>
+      <span v-for="(l, i) in t.calendar.weekdayInitials" :key="i" class="dow">{{ l }}</span>
       <template v-for="(cell, i) in cells" :key="i">
         <span v-if="!cell" />
         <button
@@ -27,9 +27,9 @@
     </div>
 
     <div class="legend">
-      <span><i class="dot taken" /> Pris</span>
-      <span><i class="dot skipped" /> Ignoré</span>
-      <span><i class="dot missed" /> Oublié</span>
+      <span><i class="dot taken" /> {{ t.calendar.taken }}</span>
+      <span><i class="dot skipped" /> {{ t.calendar.skipped }}</span>
+      <span><i class="dot missed" /> {{ t.calendar.missed }}</span>
     </div>
   </div>
 </template>
@@ -39,6 +39,7 @@ import { computed, ref } from 'vue';
 import { IonButton, IonIcon } from '@ionic/vue';
 import { chevronBack, chevronForward } from 'ionicons/icons';
 import { dateKey, type IntakeEntry } from '@/models/medication';
+import { dateLocale, t } from '@/i18n';
 
 const props = defineProps<{
   log: Record<string, IntakeEntry>;
@@ -48,12 +49,11 @@ const props = defineProps<{
 }>();
 const emit = defineEmits<{ select: [string] }>();
 
-const LABELS = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
 const todayKey = dateKey();
 const cursor = ref(new Date(new Date().getFullYear(), new Date().getMonth(), 1));
 
 const title = computed(() => {
-  const t = cursor.value.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+  const t = cursor.value.toLocaleDateString(dateLocale, { month: 'long', year: 'numeric' });
   return t.charAt(0).toUpperCase() + t.slice(1);
 });
 

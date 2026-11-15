@@ -3,30 +3,30 @@
     <ion-item>
       <ion-input
         v-model="draft.name"
-        label="Médicament"
+        :label="t.form.medication"
         label-placement="floating"
         fill="outline"
-        placeholder="ex. Lévothyrox"
+        :placeholder="t.form.placeholder"
         :maxlength="40"
       />
     </ion-item>
 
     <ion-item>
-      <ion-input v-model="draft.time" type="time" label="Heure du rappel" label-placement="floating" fill="outline" />
+      <ion-input v-model="draft.time" type="time" :label="t.form.time" label-placement="floating" fill="outline" />
     </ion-item>
 
     <ion-item>
       <ion-select
         :value="draft.frequency.kind"
-        label="Fréquence"
+        :label="t.form.frequency"
         label-placement="floating"
         fill="outline"
         interface="popover"
         @ion-change="setKind($event.detail.value)"
       >
-        <ion-select-option value="daily">Tous les jours</ion-select-option>
-        <ion-select-option value="weekdays">Certains jours</ion-select-option>
-        <ion-select-option value="interval">Tous les N jours</ion-select-option>
+        <ion-select-option value="daily">{{ t.form.optionDaily }}</ion-select-option>
+        <ion-select-option value="weekdays">{{ t.form.optionWeekdays }}</ion-select-option>
+        <ion-select-option value="interval">{{ t.form.optionInterval }}</ion-select-option>
       </ion-select>
     </ion-item>
 
@@ -39,7 +39,7 @@
           :color="draft.frequency.days.includes(d) ? 'primary' : 'medium'"
           @click="toggleDay(d)"
         >
-          {{ WEEKDAY_SHORT[d] }}
+          {{ t.frequency.weekdaysShort[d] }}
         </ion-chip>
       </div>
     </ion-item>
@@ -50,7 +50,7 @@
         type="number"
         min="1"
         max="365"
-        label="Tous les … jours"
+        :label="t.form.everyDaysLabel"
         label-placement="floating"
         fill="outline"
         @ion-input="setEveryDays($event.detail.value)"
@@ -67,20 +67,20 @@
         :snaps="true"
         :pin="true"
         label-placement="stacked"
-        :label="`Relance si ignoré : ${draft.maxRepeats}`"
+        :label="t.form.repeats(draft.maxRepeats)"
       />
     </ion-item>
 
     <ion-item v-if="draft.maxRepeats > 0">
-      <ion-select v-model="draft.repeatIntervalMin" label="Délai entre relances" label-placement="floating" fill="outline" interface="popover">
+      <ion-select v-model="draft.repeatIntervalMin" :label="t.form.repeatDelay" label-placement="floating" fill="outline" interface="popover">
         <ion-select-option v-for="m in REPEAT_INTERVAL_CHOICES" :key="m" :value="m">
-          {{ m }} min
+          {{ t.form.minutes(m) }}
         </ion-select-option>
       </ion-select>
     </ion-item>
 
     <ion-item v-if="showEnabled">
-      <ion-toggle :checked="draft.enabled" @ion-change="setEnabled($event)">Rappel activé</ion-toggle>
+      <ion-toggle :checked="draft.enabled" @ion-change="setEnabled($event)">{{ t.form.enabled }}</ion-toggle>
     </ion-item>
   </ion-list>
 </template>
@@ -92,9 +92,10 @@ import {
   alertController,
 } from '@ionic/vue';
 import {
-  MAX_REPEATS, REPEAT_INTERVAL_CHOICES, WEEKDAY_ORDER, WEEKDAY_SHORT,
+  MAX_REPEATS, REPEAT_INTERVAL_CHOICES, WEEKDAY_ORDER,
   clone, dateKey, type MedicationDraft,
 } from '@/models/medication';
+import { t } from '@/i18n';
 
 const props = defineProps<{ modelValue: MedicationDraft; showEnabled?: boolean }>();
 const emit = defineEmits<{ 'update:modelValue': [MedicationDraft] }>();
@@ -125,12 +126,12 @@ async function setEnabled(event: CustomEvent<{ checked: boolean }>) {
   toggle.checked = true; // reste activé tant que l'utilisateur n'a pas confirmé
   confirming = true;
   const alert = await alertController.create({
-    header: 'Désactiver ce rappel ?',
-    message: 'Tu ne recevras plus aucune notification pour ce médicament.',
+    header: t.form.disableHeader,
+    message: t.form.disableMessage,
     buttons: [
-      { text: 'Annuler', role: 'cancel' },
+      { text: t.common.cancel, role: 'cancel' },
       {
-        text: 'Désactiver', role: 'destructive',
+        text: t.form.disable, role: 'destructive',
         handler: () => { draft.enabled = false; toggle.checked = false; },
       },
     ],

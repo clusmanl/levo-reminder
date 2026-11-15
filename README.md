@@ -10,6 +10,7 @@ Application Android de rappels de prise de médicaments. Ionic 8, Vue 3, Capacit
 - Relances si la notification est ignorée (nombre et délai réglables par médicament), avec des messages de plus en plus insistants
 - Coche : enregistre la prise ; croix : ignore le rappel. Les relances du jour s'arrêtent dans les deux cas
 - Calendrier de suivi (pris / ignoré / oublié), modifiable en touchant un jour
+- Interface et notifications en français ou en anglais, selon la langue de l'appareil
 
 Les données sont stockées localement sur l'appareil.
 
@@ -28,9 +29,10 @@ Les données sont stockées localement sur l'appareil.
 ## Architecture
 
 - `src/models/medication.ts` : types, dates, fréquences
+- `src/i18n/` : textes de l'interface en français (`fr.ts`, référence) et en anglais (`en.ts`), langue détectée au démarrage
 - `src/services/repository.ts` : stockage derrière l'interface `MedicationRepository` (point d'extension pour une synchronisation cloud)
 - `src/services/notifications.ts` : planification sur une fenêtre glissante de 14 jours, replanifiée à chaque ouverture
-- `src/services/notificationMessages.ts` : messages de notification (30 par niveau d'insistance, de plus en plus insultants, tirés au hasard)
+- `src/services/notificationMessages.ts` : messages de notification (30 par niveau d'insistance et par langue, de plus en plus insultants, tirés au hasard ; jeu anglais dans `notificationMessages.en.ts`)
 - `src/stores/medications.ts` : état et actions
 - `src/theme/` : `variables.css` (jetons de couleur) et `overrides.css` (surcharges des composants Ionic)
 - `src/views/`, `src/components/` : interface
