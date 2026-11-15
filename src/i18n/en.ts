@@ -49,7 +49,7 @@ export const en: Messages = {
     optionWeekdays: 'Specific days',
     optionInterval: 'Every N days',
     everyDaysLabel: 'Every … days',
-    repeats: (n: number) => `Nag me if ignored: ${n}`,
+    repeats: (n: number) => `Repeat if ignored: ${n}`,
     repeatDelay: 'Delay between nags',
     minutes: (m: number) => `${m} min`,
     enabled: 'Reminder on',

@@ -43,7 +43,7 @@ const LEVEL_0: NotificationMessage[] = [
 /** Level 1: gentle teasing. */
 const LEVEL_1: NotificationMessage[] = [
   ["🙄 Head in the clouds, huh", "Second reminder for {name}. Planning to take it this year?"],
-  ["🐌 Speedy Gonzales over here", "A snail would've swallowed {name} by now."],
+  ["🐌 Slowpoke alert", "A snail would've swallowed {name} by now."],
   ["😏 Oh, the busy bee", "{name} is waiting, but you clearly have better things to do. Like nothing."],
   ["🧠 Hello? Anybody home?", "Is there anyone in there? {name}!"],
   ["🥔 You absolute potato", "A potato would remember {name}. Apparently you don't."],
@@ -94,14 +94,14 @@ const LEVEL_2: NotificationMessage[] = [
   ["🧀 Swiss cheese brain", "Full of holes. {name} fell right through one."],
   ["🐧 Waddling penguin", "Waddle over to {name}."],
   ["🍆 Big goof", "I'm saying this nicely: take {name}, goof."],
-  ["🛠️ Class-A numpty", "A little numpty who forgets {name}. Original."],
+  ["🛠️ Grade-A goofball", "A little goofball who forgets {name}. How original."],
   ["🥔 Soulless spud", "{name} is looking at you. It's crying. Take it, spud."],
   ["🧱 Thick as a brick", "And twice as dense. {name}!"],
   ["🪰 Buzzing nuisance", "You hover and buzz but you don't take {name}."],
   ["🐸 Ribbit, ribbit, ribbit", "That's the sound of your brain. {name}!"],
   ["🧻 Soft as toilet paper", "Take {name} or you'll fall apart."],
   ["🍄 Decorative mushroom", "Stay on your mat if you like, but take {name}."],
-  ["🙉 Deaf to reminders", "Three times for {name}. Are you plugged up or what?"],
+  ["🙉 Selective listening", "Three times for {name}. Are you ignoring me on purpose?"],
   ["🦨 Smells like a dunce", "Get some air and take {name}."],
   ["🐛 Soggy caterpillar", "Inch your way over to {name} and swallow it."],
   ["🎣 Half-awake fish", "Open wide, this one's for {name}."],
@@ -126,7 +126,7 @@ const LEVEL_3: NotificationMessage[] = [
   ["🤏 Prize-winning noodle", "{name}. A glass of water. Even a noodle like you can manage."],
   ["📢 Wake up, you numbskull", "{name}! It's not complicated!"],
   ["🚫 Poor dope", "Fourth reminder for {name}, you poor dope."],
-  ["🫥 Upside-down pie", "You're a muppet. Take {name}."],
+  ["🫥 Absolute clown show", "You're a muppet. Take {name}."],
   ["🔥 Stubborn jackass", "{name} shouldn't need four reminders."],
   ["🗑️ Brain in the trash", "Fish it out and take {name}."],
   ["😑 Idiot, cubed", "No more, no less. {name}, now."],
@@ -173,7 +173,7 @@ const LEVEL_4: NotificationMessage[] = [
   ["🥶 Even I'm embarrassed", "For you. You've forgotten {name} five times. Five!"],
   ["😠 Face like a slapped ass", "Take {name}, smug bastard."],
   ["🔪 I swear to God", "If you don't take {name}, I'm not stopping. Clown."],
-  ["🧱 Hard of hearing, huh", "{name}, does that ring a bell? Pathetic prick."],
+  ["🧱 Talking to a brick wall", "{name}, does that ring a bell? Pathetic prick."],
 ];
 
 /** Level 5: very crude. */
@@ -199,7 +199,7 @@ const LEVEL_5: NotificationMessage[] = [
   ["😤 I'm fucking done", "With you, your forgetting, and {name} just sitting there. Take it!"],
   ["🚨 Maximum shithead alert", "{name} isn't taken, you massive prick."],
   ["🔔 Ding ding, goddamn it", "{name}. Now. Asshole."],
-  ["🧟 You're completely fucked in the head", "You forget {name} every single morning?"],
+  ["🧟 You absolute walking disaster", "You forget {name} every single morning?"],
   ["🥵 I'm losing my shit", "{name}, fuck off and take it!"],
   ["🦠 Morning scum", "{name}. One pill. Water. Swallow, scum."],
   ["🛠️ Steaming pile of crap", "It must be hard being this dumb. Take {name}."],

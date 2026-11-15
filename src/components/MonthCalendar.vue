@@ -53,8 +53,8 @@ const todayKey = dateKey();
 const cursor = ref(new Date(new Date().getFullYear(), new Date().getMonth(), 1));
 
 const title = computed(() => {
-  const t = cursor.value.toLocaleDateString(dateLocale, { month: 'long', year: 'numeric' });
-  return t.charAt(0).toUpperCase() + t.slice(1);
+  const label = cursor.value.toLocaleDateString(dateLocale, { month: 'long', year: 'numeric' });
+  return label.charAt(0).toUpperCase() + label.slice(1);
 });
 
 const cells = computed(() => {
