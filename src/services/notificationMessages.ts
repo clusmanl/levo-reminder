@@ -108,7 +108,7 @@ const LEVEL_2: NotificationMessage[] = [
   ["🐸 Croâ, croâ, croâ", "Voilà le bruit de ton cerveau. {name} !"],
   ["🧻 Mou comme du papier toilette", "Prends {name} ou tu te déchires."],
   ["🍄 Champignon décoratif", "Reste sur ton tapis si tu veux, mais prends {name}."],
-  ["🙉 Sourd aux rappels", "Trois fois pour {name}. T'es bouché ou quoi ?"],
+  ["🙉 Écoute sélective", "Trois fois pour {name}. Tu m'ignores exprès ?"],
   ["🦨 Ça sent l'idiot", "Aère-toi et prends {name}."],
   ["🐛 Chenille ramollie", "Ramène-toi vers {name} et avale-le."],
   ["🎣 Poisson mal réveillé", "Ouvre la bouche, c'est pour {name}."],
@@ -124,7 +124,7 @@ const LEVEL_3: NotificationMessage[] = [
   ["🪦 Ici repose ton QI", "Prends {name} pour lui rendre hommage."],
   ["🔨 Idiot du matin", "Prends {name}, idiot. Je ne vais pas te le dire dix fois. Si."],
   ["🫵 Toi, oui, toi, l'imbécile", "Lis ça et prends {name}."],
-  ["🦴 Crétin des Alpes", "Voilà. {name}. Maintenant. Crétin."],
+  ["🦴 Bête comme tes pieds", "Voilà. {name}. Maintenant. Andouille."],
   ["⛔ T'es lent à la détente, hein", "{name} attend et tu passes pour un gros benêt."],
   ["🥶 Quel boulet, sérieux", "Tu es un boulet. {name}, c'est pas la mer à boire."],
   ["🐀 Cervelle de moineau", "Pas de souvenir de {name} ? Ça ne m'étonne pas."],
@@ -180,7 +180,7 @@ const LEVEL_4: NotificationMessage[] = [
   ["🥶 Même moi j'ai honte", "Pour toi. Tu as oublié {name} cinq fois. Cinq !"],
   ["😠 Tête à claques", "Prends {name}, tête à claques."],
   ["🔪 Je te jure", "Si tu ne prends pas {name}, je continue. Bouffon."],
-  ["🧱 Dur de la feuille, hein", "{name}, ça te parle ? Pauvre con."],
+  ["🧱 Je parle à un mur", "{name}, ça te parle ? Pauvre con."],
 ];
 
 /** Niveau 5 : très grossier. */
@@ -206,7 +206,7 @@ const LEVEL_5: NotificationMessage[] = [
   ["😤 J'en ai plein le cul", "De toi, de ton oubli, de {name} qui traîne. Prends-le !"],
   ["🚨 Sale con alerte maximale", "{name} n'est pas pris, espèce de gros con."],
   ["🔔 Dring dring putain", "{name}. Maintenant. Connard."],
-  ["🧟 T'es complètement taré", "Tu oublies {name} chaque matin ?"],
+  ["🧟 Catastrophe ambulante", "Tu oublies {name} chaque matin ?"],
   ["🥵 Je pète les plombs", "{name}, va te faire foutre, prends-le !"],
   ["🦠 Raclure du matin", "{name}. Un cachet. De l'eau. Avale, raclure."],
   ["🛠️ Gros tas de merde", "Ça doit être dur d'être aussi con. Prends {name}."],
